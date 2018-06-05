@@ -1,0 +1,35 @@
+version: '2.1'
+
+services:
+  uaa:
+    image: dtr.predix.io/predix-edge/uaa:4.6.1
+    command: "catalina.sh run"
+    links:
+      - uaadb:uaadb
+    volumes:
+      - "./config:/uaa"
+    restart: always
+    ports:
+      - 80:8080
+    environment:
+      DOMAIN: iiot.px
+      DB_ENV_DB: uaadb
+      DB_ENV_USER: postgres
+      DB_ENV_PASS: postgres
+      SPRING_PROFILES_ACTIVE: postgresql
+      UAA_HOST: predix-uaa.iiot.px
+      UAA_PORT: 80
+      UAA_BASEURL: http://predix-uaa.iiot.px
+      DB_PORT_5432_TCP_ADDR: uaadb
+      DB_PORT_5432_TCP_PORT: 5432
+      VERSION: "4.6.1"
+  uaadb:
+    image: postgres:9.6.2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: uaadb
+      VERSION: "9.6.2"
+    volumes:
+      - "./data:/var/lib/postgresql/data"
